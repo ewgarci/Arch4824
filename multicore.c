@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "smat.h"
+#include "mm.c"
+
+
 
 void smat_memset(struct smat *m)
 {
@@ -17,17 +20,9 @@ void smat_memset(struct smat *m)
 /* Matrix multiplication, r = a x b */
 void smat_mult(const struct smat *a, const struct smat *b, struct smat *r)
 {
-	int i, j, k;
+	smat_memset(r);
+	parallelOperation(a->data, b->data, r->data, a->rows, MULTIPLY);
 
-//	smat_memset(r);
-	
-	for (i = 0; i < a->rows; i++) {
-		for (j = 0; j < b->cols; j++) {
-			r->data[i][j] = 0;
-			for (k = 0; k < a->cols; k++)
-				r->data[i][j] += a->data[i][k] * b->data[k][j];
-		}
-	}
 }
 
 /*
@@ -37,32 +32,17 @@ void smat_mult(const struct smat *a, const struct smat *b, struct smat *r)
  */
 void smat_vect(const struct smat *a, const struct smat *v, struct smat *r)
 {
-	int i, j;
-
-	for (i = 0; i < a->rows; i++) {
-		r->data[i][0] = 0;
-		for (j = 0; j < a->cols; j++)
-			r->data[i][0] += a->data[i][j] * v->data[j][0];
-	}
+	parallelOperation(a->data, v->data, r->data, a->rows, VECTOR);
 }
 
 /* Matrix addition, i.e. r = a + b */
 void smat_add(const struct smat *a, const struct smat *b, struct smat *r)
 {
-	int i, j;
-
-	for (i = 0; i < a->rows; i++)
-		for (j = 0; j < a->cols; j++)
-			r->data[i][j] = a->data[i][j] + b->data[i][j];
+	parallelOperation(a->data, b->data, r->data, a->rows, ADD);
 }
 
 /* Scale matrix a by constant alpha */
 void smat_scale(const struct smat *a, const struct smat *alpha, struct smat *r)
 {
-	double factor = alpha->data[0][0];
-	int i, j;
-
-	for (i = 0; i < a->rows; i++)
-		for (j = 0; j < a->cols; j++)
-			r->data[i][j] = a->data[i][j] * factor;
+	parallelOperation(a->data, alpha->data, r->data, a->rows, SCALE);
 }

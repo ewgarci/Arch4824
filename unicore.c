@@ -1,9 +1,10 @@
 /*
- * Naive implementations of the matrix algorithms.
+ * Optimized Unicore implementations of the matrix algorithms.
  * Note that the result matrix r is not initisialised to 0.
  */
 #include <stdio.h>
 #include <string.h>
+#include "strassen.c"
 #include "smat.h"
 
 void smat_memset(struct smat *m)
@@ -13,21 +14,35 @@ void smat_memset(struct smat *m)
 		memset (m->data[i],'0', m->cols * sizeof(double));
 }
 
-
 /* Matrix multiplication, r = a x b */
 void smat_mult(const struct smat *a, const struct smat *b, struct smat *r)
 {
-	int i, j, k;
-
-//	smat_memset(r);
 	
-	for (i = 0; i < a->rows; i++) {
-		for (j = 0; j < b->cols; j++) {
-			r->data[i][j] = 0;
-			for (k = 0; k < a->cols; k++)
-				r->data[i][j] += a->data[i][k] * b->data[k][j];
-		}
-	}
+	smat_memset(r);
+
+	strassen(a->data, b->data, r->data, a->rows);
+
+}
+
+/*****************************************************************
+ * Reproduced from http://stackoverflow.com/questions/12289235/simple-and-fast-matrix-vector-multiplication-in-c-c
+ ******************************************************************/
+double vectors_dot_prod(double *x, double **y, int n)
+{
+    double res = 0.0;
+    int i = 0;
+    for (; i <= n-4; i+=4)
+    {
+		res += (x[i] * y[i][0] +
+                x[i+1] * y[i+1][0] +
+                x[i+2] * y[i+2][0] +
+                x[i+3] * y[i+3][0]);
+    }
+    for (; i < n; i++)
+    {
+        res += x[i] * y[i][0];
+    }
+    return res;
 }
 
 /*
@@ -37,14 +52,15 @@ void smat_mult(const struct smat *a, const struct smat *b, struct smat *r)
  */
 void smat_vect(const struct smat *a, const struct smat *v, struct smat *r)
 {
-	int i, j;
+	int i;
 
-	for (i = 0; i < a->rows; i++) {
-		r->data[i][0] = 0;
-		for (j = 0; j < a->cols; j++)
-			r->data[i][0] += a->data[i][j] * v->data[j][0];
-	}
+    for (i = 0; i < a->rows; i++)
+       r->data[i][0] = vectors_dot_prod(a->data[i], v->data, a->cols);
+		
 }
+	
+
+
 
 /* Matrix addition, i.e. r = a + b */
 void smat_add(const struct smat *a, const struct smat *b, struct smat *r)
