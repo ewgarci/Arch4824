@@ -126,6 +126,7 @@ static void matrix_fill_in(struct smat *arr)
 	}
 }
 
+
 static struct smat *__create(unsigned int n, size_t rows, size_t cols)
 {
 	struct smat *array;
@@ -142,7 +143,7 @@ static struct smat *__create(unsigned int n, size_t rows, size_t cols)
 
 		m->rows = rows;
 		m->cols = cols;
-		m->data = calloc_2d_double(rows, cols);
+		m->data = (double **)calloc_2d_double(rows, cols);
 
 		matrix_fill_in(m);
 	}

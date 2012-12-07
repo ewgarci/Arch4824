@@ -17,6 +17,7 @@ void free_2d_double(double **matrix)
 	free(matrix);
 }
 
+/*
 void *calloc_2d_double(size_t rows, size_t cols)
 {
 	double *flat;
@@ -41,17 +42,8 @@ void *calloc_2d_double(size_t rows, size_t cols)
 
 	return mem;
 }
-/*
-void smat_memset(struct smat *m)
-{
-	int i;
-	
-	for (i = 0; i < m->rows; i++)
-		memset (m->data[i],'0', m->cols * sizeof(double));
-		
-	
-}
 */
+
 /* Print array in an octave-friendly format */
 void smat_printf(const char *title, const struct smat *mat)
 {
@@ -93,10 +85,10 @@ struct smat *smat_calloc(size_t rows, size_t cols)
 		exit(EXIT_FAILURE);
 	}
 
+	
 	m->rows = rows;
 	m->cols = cols;
-	m->data = calloc_2d_double(rows, cols);
-
+	m->data = (double **)calloc_2d_double(rows, cols);
 	return m;
 }
 

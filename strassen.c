@@ -13,18 +13,24 @@ void subtract(double **a, double **b, double **result, int tam);
 double **allocate_real_matrix(int tam, int random);
 double **free_real_matrix(double **v, int tam);
 
-#define BREAK 32
+#define BREAK 	16
+
+ int isPowerOfTwo (unsigned int x)
+{
+  return ((x != 0) && !(x & (x - 1)));
+}
  
 void strassen(double **a, double **b, double **c, int tam) {
  
-    // trivial case: when the matrix is 1 X 1:
-	/*
+    /*trivial case: when the matrix is 1 X 1:
     if (tam == 1) {
         c[0][0] = a[0][0] * b[0][0];
         return;
     }
 	*/
-	 if (tam <= BREAK) {
+	
+
+	if (tam <= BREAK){
 		int i, j, k;
 		for (i = 0; i < tam; i++) {
 			for (k = 0; k < tam; k++) {
@@ -44,31 +50,31 @@ void strassen(double **a, double **b, double **c, int tam) {
         double **p1, **p2, **p3, **p4, **p5, **p6, **p7;
  
         // memory allocation:
-        a11 = allocate_real_matrix(newTam, -1);
-        a12 = allocate_real_matrix(newTam, -1);
-        a21 = allocate_real_matrix(newTam, -1);
-        a22 = allocate_real_matrix(newTam, -1);
+        a11 = allocate_real_matrix(newTam, 0);
+        a12 = allocate_real_matrix(newTam, 0);
+        a21 = allocate_real_matrix(newTam, 0);
+        a22 = allocate_real_matrix(newTam, 0);
+                                           
+        b11 = allocate_real_matrix(newTam, 0);
+        b12 = allocate_real_matrix(newTam, 0);
+        b21 = allocate_real_matrix(newTam, 0);
+        b22 = allocate_real_matrix(newTam, 0);
+                                           
+        c11 = allocate_real_matrix(newTam, 0);
+        c12 = allocate_real_matrix(newTam, 0);
+        c21 = allocate_real_matrix(newTam, 0);
+        c22 = allocate_real_matrix(newTam, 0);
  
-        b11 = allocate_real_matrix(newTam, -1);
-        b12 = allocate_real_matrix(newTam, -1);
-        b21 = allocate_real_matrix(newTam, -1);
-        b22 = allocate_real_matrix(newTam, -1);
+        p1 = allocate_real_matrix(newTam, 0);
+        p2 = allocate_real_matrix(newTam, 0);
+        p3 = allocate_real_matrix(newTam, 0);
+        p4 = allocate_real_matrix(newTam, 0);
+        p5 = allocate_real_matrix(newTam, 0);
+        p6 = allocate_real_matrix(newTam, 0);
+        p7 = allocate_real_matrix(newTam, 0);
  
-        c11 = allocate_real_matrix(newTam, -1);
-        c12 = allocate_real_matrix(newTam, -1);
-        c21 = allocate_real_matrix(newTam, -1);
-        c22 = allocate_real_matrix(newTam, -1);
- 
-        p1 = allocate_real_matrix(newTam, -1);
-        p2 = allocate_real_matrix(newTam, -1);
-        p3 = allocate_real_matrix(newTam, -1);
-        p4 = allocate_real_matrix(newTam, -1);
-        p5 = allocate_real_matrix(newTam, -1);
-        p6 = allocate_real_matrix(newTam, -1);
-        p7 = allocate_real_matrix(newTam, -1);
- 
-        double **aResult = allocate_real_matrix(newTam, -1);
-        double **bResult = allocate_real_matrix(newTam, -1);
+        double **aResult = allocate_real_matrix(newTam, 0);
+        double **bResult = allocate_real_matrix(newTam, 0);
  
         int i, j;
  

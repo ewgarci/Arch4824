@@ -21,7 +21,8 @@
 struct smat {
 	double **data;
 	unsigned int rows;
-	unsigned int cols;
+	unsigned int cols;	
+	//unsigned int strassenN;
 };
 
 struct smat *smat_calloc(size_t rows, size_t cols);
@@ -33,7 +34,8 @@ void smat_printf(const char *title, const struct smat *mat);
  * as long as in doing that you're not duplicating smat's functionality.
  */
 void free_2d_double(double **matrix);
-void *calloc_2d_double(size_t rows, size_t cols);
+//void *calloc_2d_double(size_t rows, size_t cols);
+int get_best_pud_up_value(int actual_size, int Q) ;
 
 
 #endif /* _MATRIX_HELPERS_H_ */

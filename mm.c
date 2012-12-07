@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "job_api.h"
 
-#define CPUCORES	16	
+#define CPUCORES	8		
 #define MULTIPLY	0
 #define ADD			1
 #define SCALE		2
@@ -30,6 +30,9 @@ static void mm(void *args)
 			//printf("cc[%d][%d]= %lf\n", i, j, cc[i][j]);
 		}
 	}
+	//printf("%d", s->id);
+	if (s->id)
+		job_exit();
   
 }
 
@@ -55,6 +58,7 @@ static double vectors_dot_prod(double *x, double **y)
         res += x[i] * y[i][0];
     }
     return res;
+	
 }
 
 static void mv(void *args)
@@ -67,7 +71,9 @@ static void mv(void *args)
 	for (i = s->id; i < matrixSize; i += CPUCORES){
 		cc[i][0] = vectors_dot_prod(aa[i], bb);
 	}
-	  
+	//printf("%d", s->id);
+	 if (s->id)
+		job_exit();
 }
 
 static void add(void *args)
@@ -82,6 +88,9 @@ static void add(void *args)
 			cc[i][j] = aa[i][j] + bb[i][j];
 		}
 	}  
+	//printf("%d", s->id);
+	if(s->id)
+		job_exit();
 }
 
 static void scale(void *args)
@@ -94,11 +103,12 @@ static void scale(void *args)
 
 	for (i = s->id; i < matrixSize; i += CPUCORES) {
 		for (j = 0; j < matrixSize; j++) {
-				for (j = 0; j < matrixSize; j++) {
-					cc[i][j] = aa[i][j] * factor;
-				}
+			cc[i][j] = aa[i][j] * factor;
 		}
 	}
+	//printf("%d", s->id);
+	if (s->id)
+		job_exit();
 }
 
  void parallelOperation(double **a, double **b, double **c, int size, int operation)
@@ -125,24 +135,28 @@ static void scale(void *args)
 	
 	switch(operation){
 		case MULTIPLY:{
+	//		printf("Multiply[%d]: ", size);
 			for (i = 1; i < CPUCORES; i++)
 				job_create(mm, jobs[i], 0);
 			mm(jobs[0]);
 		}break;
 
 		case VECTOR:{
+	//		printf("Vector[%d]: ", size);
 			for (i = 1; i < CPUCORES; i++)
 				job_create(mv, jobs[i], 0);
 			mv(jobs[0]);
 		}break;
 
 		case ADD:{
+	//		printf("Add[%d]: ", size);
 			for (i = 1; i < CPUCORES; i++)
 				job_create(add, jobs[i], 0);
 			add(jobs[0]);
 		}break;
 
 		case SCALE:{
+	//		printf("Scale[%d]: ", size);
 			for (i = 1; i < CPUCORES; i++)
 				job_create(scale, jobs[i], 0);
 			scale(jobs[0]);
@@ -153,5 +167,6 @@ static void scale(void *args)
 	for (i = 1; i < CPUCORES; i++)
 		job_join(jobs[i]);
 
+//	printf("\n");
 }
 
