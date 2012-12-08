@@ -7,15 +7,7 @@
 #include <pthread.h>
 #endif
 
-typedef struct matrix {
-	int size;
-	double** rows;
-	double* data;
-} matrix;
-
 struct work_struct {
-	matrix a_1,a_2,b_1,b_2,c;
-	int tid;
 	int id;
 	/*
 	 * add here whatever fields you need. See job_api_example.[ch]
@@ -55,7 +47,9 @@ static inline void job_create(void (*func), void *arg, long flags)
 {
 	struct work_struct *work = arg;
 
-	pthread_create(&work->pthread, NULL, func, arg);
+	if(pthread_create(&work->pthread, NULL, func, arg)!=0){
+		perror("can't create thread!");
+	}
 }
 
 static inline int job_join(struct work_struct *work)

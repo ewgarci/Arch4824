@@ -3,14 +3,42 @@
  * Note that the result matrix r is not initisialised to 0.
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "smat.h"
+
+void *calloc_2d_double(size_t rows, size_t cols);
 
 void smat_memset(struct smat *m)
 {
 	int i;
 	for (i = 0; i < m->rows; i++)
 		memset (m->data[i],'0', m->cols * sizeof(double));
+}
+
+void *calloc_2d_double(size_t rows, size_t cols)
+{
+	double *flat;
+	double **mem;
+	int i;
+
+	flat = calloc(rows, cols * sizeof(double));
+	if (flat == NULL) {
+		fprintf(stderr, "%s: Error allocating %Zu bytes: ",
+			__func__, rows * cols * sizeof(double));
+		perror(NULL);
+		exit(EXIT_FAILURE);
+	}
+
+	mem = malloc(rows * sizeof(double *));
+	if (mem == NULL) {
+		perror("calloc_2d_double");
+		exit(EXIT_FAILURE);
+	}
+	for (i = 0; i < rows; i++)
+		mem[i] = flat + i * cols;
+
+	return mem;
 }
 
 

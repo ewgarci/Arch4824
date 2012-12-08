@@ -23,14 +23,15 @@ double **free_real_matrix(double **v, int tam);
 void strassen(double **a, double **b, double **c, int tam) {
  
     /*trivial case: when the matrix is 1 X 1:
-    if (tam == 1) {
-        c[0][0] = a[0][0] * b[0][0];
-        return;
-    }
 	*/
 	
 
 	if (tam <= BREAK){
+		if (tam == 1) {
+        		c[0][0] = a[0][0] * b[0][0];
+        		return;
+    		}
+
 		int i, j, k;
 		for (i = 0; i < tam; i++) {
 			for (k = 0; k < tam; k++) {
@@ -39,8 +40,8 @@ void strassen(double **a, double **b, double **c, int tam) {
 				}
 			}
 		}
-        return;
-    }
+        	return;
+	}
  
     // other cases are treated here:
         int newTam = tam/2;

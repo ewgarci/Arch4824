@@ -70,13 +70,25 @@ void *calloc_2d_double(size_t rows, size_t cols)
 	return mem;
 }
 
+void smat_memset(const struct smat *m)
+{
+	int i;
+	for (i = 0; i < m->rows; i++)
+		memset (m->data[i],'0', m->cols * sizeof(double));
+}
 
 /* Matrix multiplication, r = a x b */
 void smat_mult(const struct smat *a, const struct smat *b, struct smat *r)
 {
+	int strassenN;
+	
+	if (r->rows <= 16){
+		strassenN = r->rows;
+		smat_memset(r);
+	}else
+		strassenN = get_best_pud_up_value(r->rows, 16);
 
-	strassen(a->data, b->data, r->data, get_best_pud_up_value(r->rows, 16));
-//	printf("strassen num = %d\n", r->strassenN);
+	strassen(a->data, b->data, r->data, strassenN);
 
 }
 
