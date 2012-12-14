@@ -4,7 +4,7 @@
  */
 #include <stdio.h>
 #include <string.h>
-#include "strassen.c"
+#include <stdlib.h>
 #include "smat.h"
 
 void *calloc_2d_double(size_t rows, size_t cols);
@@ -23,7 +23,7 @@ void smat_mult(const struct smat *a, const struct smat *b, struct smat *r)
 	int i, j, k;
 	
 	smat_memset(r);
-	
+	/*
 	for (i = 0; i < r->rows; i++) {
 		for (k = 0; k < r->rows; k++) {
 			for (j = 0; j < r->rows; j++) {
@@ -31,7 +31,25 @@ void smat_mult(const struct smat *a, const struct smat *b, struct smat *r)
 			}
 		}
 	}
-
+	
+	double tmp[r->rows][r->rows];
+	for (i = 0; i < r->rows; ++i)
+		for (j = 0; j < r->rows; ++j)
+			tmp[i][j] =  b->data[j][i];
+		for (i = 0; i < r->rows; ++i)
+			for (j = 0; j < r->rows; ++j)
+				for (k = 0; k < r->rows; ++k)
+					r->data[i][j] += a->data[i][k] * tmp[j][k];
+	*/
+	
+		define SM (32 / sizeof (double))
+		for (i = 0; i < r->rows; i += SM)
+			for (j = 0; j < r->rows; j += SM)
+				for (k = 0; k < r->rows; k += SM)
+					for (i2 = 0, rres = &r->data[i][j],	rmul1 = &a->data[i][k]; i2 < SM; ++i2, rres += r->rows, rmul1 += r->rows)
+							for (k2 = 0, rmul2 = &b->data[k][j]; k2 < SM; ++k2, rmul2 += r->rows)
+		for (j2 = 0; j2 < SM; ++j2)
+					rres[j2] += rmul1[k2] * rmul2[j2];
 }
 
 /*****************************************************************
